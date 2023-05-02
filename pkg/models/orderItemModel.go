@@ -3,8 +3,8 @@ package models
 type OrderItem struct {
 	ID       uint `json:"_id,omitempty"`
 	Quantity uint `json:"quantity,omitempty"`
-	FoodID   uint `json:"food_id,omitempty"`
-	Food     Food `gorm:"foreignKey:FoodID;constraint:OnDelete:CASCADE"`
+	MenuID   uint `json:"menu_id,omitempty"`
+	Menu     Menu `gorm:"foreignKey:MenuID;constraint:OnDelete:CASCADE"`
 }
 
 // OrderItemID string   `json:"order_item_id,omitempty"`

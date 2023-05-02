@@ -28,14 +28,18 @@ func Serve(e *echo.Echo) {
 	menuservice := services.MenuServiceInstance(menuRepo)
 	menuController := controllers.SetMenuService(&menuservice)
 
+	orderItemRepo := repositories.OrderItemDBInterface(db)
+	orderItemService := services.OrderItemServiceInstance(orderItemRepo)
+	orderItemController := controllers.SetOrderItemService(&orderItemService)
+
 	routes.UserRoutes(e, userController)
 	routes.FoodRoutes(e, foodController)
 	routes.MenuRoutes(e, menuController)
-	routes.OrderItemRoutes(e)
+	routes.OrderItemRoutes(e, orderItemController)
 	// routes.TableRoutes(e)
 	// routes.OrderRoutes(e)
 	// routes.InvoiceRoutes(e)
-	
+
 	log.Fatal(e.Start(fmt.Sprintf(":%s", config.LocalConfig.Port)))
 
 }

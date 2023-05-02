@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"restaurant-management/pkg/domain"
 	"restaurant-management/pkg/models"
+	"restaurant-management/pkg/types"
 
 	"gorm.io/gorm"
 )
@@ -19,11 +20,19 @@ func UserDBInterface(db *gorm.DB) domain.UserRepoInterface {
 	}
 
 }
-func (userRepo *UserRepo) Registration(user *models.User) error {
-	if err := userRepo.DB.Where("email = ?", user.Email).First(&user).Error; err == nil {
+func (userRepo *UserRepo) Registration(user *types.Registration) error {
+	if err := userRepo.DB.Where("email = ?", user.Email).First(&models.User{}).Error; err == nil {
 		return errors.New("user already registrated")
 	}
-	if err := userRepo.DB.Create(&user).Error; err != nil {
+	newUser := models.User{
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Password:  user.Password,
+		Email:     user.Email,
+		Phone:     user.Phone,
+		UserType:  user.UserType,
+	}
+	if err := userRepo.DB.Create(&newUser).Error; err != nil {
 		return err
 	}
 	return nil
@@ -72,10 +81,3 @@ func (userRepo *UserRepo) DeleteUser(ID uint) error {
 	}
 	return nil
 }
-
-// func (userRepo *UserRepo) IsAdmin(
-// 	user := models.User{}
-
-//    UserRepo.DB.Where("user")
-
-// )

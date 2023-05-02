@@ -1,0 +1,16 @@
+{
+  "key": "9",
+  "type": "string",
+  "value": [
+    {
+      "_id": 9,
+      "first_name": "Bappy",
+      "last_name": "Hossain",
+      "password": "123456",
+      "email": "bapp1y@gmail.com",
+      "phone": "01780315793",
+      "user_type": "admin"
+    }
+  ],
+  "id": "local.db0.string.9"
+}

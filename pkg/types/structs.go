@@ -1,8 +1,11 @@
 package types
 
 import (
+	"fmt"
+
 	jwt "github.com/dgrijalva/jwt-go"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
 type SignedDetails struct {
@@ -30,26 +33,34 @@ type Token struct {
 	UserRefreshtoken string
 }
 
-// package types
+type CustomError struct {
+	Message string
+	Err     error
+}
 
-// import (
-// 	jwt "github.com/dgrijalva/jwt-go"
-// )
+func (ce *CustomError) Error() string {
+	if ce.Err != nil {
+		return fmt.Sprintf("%s: %v", ce.Message, ce.Err)
+	}
+	return ce.Message
+}
 
-// type SignedUserDetails struct {
-// 	Id    int
-// 	Email string
-// 	Type  string
-// 	jwt.StandardClaims
-// }
+type Registration struct {
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty" `
+	Password  string `json:"password,omitempty" `
+	Email     string `json:"email,omitempty" `
+	Phone     string `json:"phone,omitempty"`
+	UserType  string `json:"user_type"`
+}
 
-// type User struct {
-// 	Email    string `json:"email" validate:"required,email"`
-// 	Password string `json:"password" validate:"required"`
-// 	Type     string `json:"type" validate:"required"`
-// }
-
-// type Token struct {
-// 	User_Token        string
-// 	User_Refreshtoken string
-// }
+func (user Registration) Validate() error {
+	return validation.ValidateStruct(&user,
+		validation.Field(&user.FirstName, validation.Required, validation.Length(3, 50)),
+		validation.Field(&user.LastName, validation.Required, validation.Length(3, 50)),
+		validation.Field(&user.Password, validation.Required),
+		validation.Field(&user.Email, validation.Required, is.Email),
+		validation.Field(&user.Phone, validation.Required, validation.Length(1, 11)),
+		validation.Field(&user.UserType),
+	)
+}

@@ -6,6 +6,7 @@ import (
 	"restaurant-management/pkg/consts"
 	"restaurant-management/pkg/domain"
 	"restaurant-management/pkg/models"
+	"restaurant-management/pkg/types"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -27,7 +28,10 @@ func (menuController *MenuController) CreateMenu(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, consts.InvalidInput)
 	}
 	if err := menuController.menuService.CreateMenuService(reqMenu); err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 
 	return c.JSON(http.StatusCreated, "menu was created success")
@@ -43,7 +47,10 @@ func (menuController *MenuController) GetMenus(c echo.Context) error {
 
 	menu, err := menuController.menuService.GetMenuService(uint(ID))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+		return c.JSON(http.StatusBadRequest, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 
 	return c.JSON(http.StatusOK, menu)
@@ -57,10 +64,16 @@ func (menuController *MenuController) DeleteMenu(e echo.Context) error {
 	}
 	_, err = menuController.menuService.GetMenuService(uint(ID))
 	if err != nil {
-		return e.JSON(http.StatusBadRequest, err.Error())
+		return e.JSON(http.StatusBadRequest, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 	if err := menuController.menuService.DeleteMenuService(uint(ID)); err != nil {
-		return e.JSON(http.StatusInternalServerError, err.Error())
+		return e.JSON(http.StatusInternalServerError, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 	return e.JSON(http.StatusOK, "Menu was deleted success")
 }
@@ -68,7 +81,10 @@ func (menuController *MenuController) DeleteMenu(e echo.Context) error {
 func (menuController *MenuController) UpdateManu(c echo.Context) error {
 	var menu = &models.Menu{}
 	if err := c.Bind(menu); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+		return c.JSON(http.StatusBadRequest, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 	id := c.Param("_id")
 	ID, err := strconv.Atoi(id)
@@ -78,7 +94,10 @@ func (menuController *MenuController) UpdateManu(c echo.Context) error {
 	oldres, err := menuController.menuService.GetMenuService(uint(ID))
 	fmt.Println(err)
 	if err != nil {
-		return c.JSON(http.StatusOK, err.Error())
+		return c.JSON(http.StatusOK, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 	menu.ID = uint(ID)
 
@@ -86,7 +105,10 @@ func (menuController *MenuController) UpdateManu(c echo.Context) error {
 
 	res, err := menuController.menuService.UpdateManuService(checkedMenu)
 	if err != nil || res == nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 	return c.JSON(http.StatusOK, "update was success")
 }

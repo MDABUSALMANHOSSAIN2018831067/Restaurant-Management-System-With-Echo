@@ -6,6 +6,7 @@ import (
 	"restaurant-management/pkg/consts"
 	"restaurant-management/pkg/domain"
 	"restaurant-management/pkg/models"
+	"restaurant-management/pkg/types"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -28,7 +29,10 @@ func (foodController *FoodController) CreateFood(e echo.Context) error {
 	}
 
 	if err := foodController.foodService.CreateFoodService(reqFood); err != nil {
-		return e.JSON(http.StatusInternalServerError, err.Error())
+		return e.JSON(http.StatusInternalServerError, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 
 	return e.JSON(http.StatusCreated, "Food was created success")
@@ -43,7 +47,10 @@ func (foodController *FoodController) GetFoods(e echo.Context) error {
 
 	food, err := foodController.foodService.GetFoodService(uint(foodID))
 	if err != nil {
-		return e.JSON(http.StatusBadRequest, err.Error())
+		return e.JSON(http.StatusBadRequest, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 
 	return e.JSON(http.StatusOK, food)
@@ -52,7 +59,10 @@ func (foodController *FoodController) GetFoods(e echo.Context) error {
 func (foodController *FoodController) UpdateFood(c echo.Context) error {
 	var food = &models.Food{}
 	if err := c.Bind(food); err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+		return c.JSON(http.StatusBadRequest, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 	id := c.Param("_id")
 	ID, err := strconv.Atoi(id)
@@ -62,7 +72,10 @@ func (foodController *FoodController) UpdateFood(c echo.Context) error {
 	oldres, err := foodController.foodService.GetFoodService(uint(ID))
 	fmt.Println(err)
 	if err != nil {
-		return c.JSON(http.StatusOK, err.Error())
+		return c.JSON(http.StatusOK, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 	food.ID = uint(ID)
 
@@ -70,7 +83,10 @@ func (foodController *FoodController) UpdateFood(c echo.Context) error {
 
 	res, err := foodController.foodService.UpdateFoodService(checkedFood)
 	if err != nil || res == nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 	return c.JSON(http.StatusOK, "update was success")
 }
@@ -94,11 +110,17 @@ func (foodController *FoodController) DeleteFood(e echo.Context) error {
 
 	_, err = foodController.foodService.GetFoodService(uint(ID))
 	if err != nil {
-		return e.JSON(http.StatusBadRequest, err.Error())
+		return e.JSON(http.StatusBadRequest, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 
 	if err := foodController.foodService.DeleteFoodService(uint(ID)); err != nil {
-		return e.JSON(http.StatusInternalServerError, err.Error())
+		return e.JSON(http.StatusInternalServerError, &types.CustomError{
+			Message: err.Error(),
+			Err:     err,
+		})
 	}
 
 	return e.JSON(http.StatusOK, "Food was deleted success")

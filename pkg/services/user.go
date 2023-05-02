@@ -4,6 +4,9 @@ import (
 	"errors"
 	"restaurant-management/pkg/domain"
 	"restaurant-management/pkg/models"
+	"restaurant-management/pkg/redis"
+	"restaurant-management/pkg/types"
+	"strconv"
 )
 
 type UserService struct {
@@ -15,23 +18,37 @@ func UserServiceInstance(userRepo domain.UserRepoInterface) domain.UserServiceIn
 		repo: userRepo,
 	}
 }
-func (service *UserService) RegistrationService(user *models.User) error {
+func (service *UserService) RegistrationService(user *types.Registration) error {
 	err := service.repo.Registration(user)
 	return err
 }
 
 func (service *UserService) LoginService(email string) (*models.User, error) {
-	foods, err := service.repo.Login(email)
-	return foods, err
+	users, err := service.repo.Login(email)
+	return users, err
 
 }
 
 func (service *UserService) GetUserService(ID uint) ([]models.User, error) {
-	food, err := service.repo.GetUsers(ID)
-	if err != nil {
-		return nil, err
+	useID := strconv.FormatUint(uint64(ID), 10)
+	store := redis.NewRedisStore()
+	getData, _ := store.Get(useID)
+	if getData == nil {
+		user, err := service.repo.GetUsers(ID)
+		if err != nil {
+			return nil, err
+		}
+		err = store.Set(useID, user)
+		if err != nil {
+			return nil, err
+		}
+		return user, nil
 	}
-	return food, nil
+	// food, err := service.repo.GetUsers(ID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	return *getData, nil
 }
 
 func (service *UserService) DeleteUserService(ID uint) error {
