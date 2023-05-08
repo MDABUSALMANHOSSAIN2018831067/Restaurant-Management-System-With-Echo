@@ -9,6 +9,7 @@ import (
 	"restaurant-management/pkg/repositories"
 	"restaurant-management/pkg/routes"
 	"restaurant-management/pkg/services"
+	unittesting "restaurant-management/pkg/unitTesting"
 
 	"github.com/labstack/echo/v4"
 )
@@ -23,6 +24,7 @@ func Serve(e *echo.Echo) {
 	userRepo := repositories.UserDBInterface(db)
 	userService := services.UserServiceInstance(userRepo)
 	userController := controllers.SetUserService(&userService)
+	unittesting.SetUserTestingService(&userService)
 
 	menuRepo := repositories.MenuDBInterface(db)
 	menuservice := services.MenuServiceInstance(menuRepo)

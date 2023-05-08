@@ -1,6 +1,21 @@
-FROM golang:1.12.0-alpine3.9
+FROM golang:1.18-alpine
+ENV GO111MODULE=on
+
 RUN mkdir /app
 ADD . /app
 WORKDIR /app
-RUN go build -o main .
-CMD ["/app/main"]
+RUN apk add git
+
+# Download necessary Go modules
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+COPY . .
+
+# COPY *.go ./
+
+RUN go build -o /main .
+EXPOSE 4000
+CMD ["/main"]
+

@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"restaurant-management/pkg/domain"
 	"restaurant-management/pkg/models"
 	"restaurant-management/pkg/redis"
@@ -32,7 +33,8 @@ func (service *UserService) LoginService(email string) (*models.User, error) {
 func (service *UserService) GetUserService(ID uint) ([]models.User, error) {
 	useID := strconv.FormatUint(uint64(ID), 10)
 	store := redis.NewRedisStore()
-	getData, _ := store.Get(useID)
+	getData, err := store.Get(useID)
+	fmt.Println(err)
 	if getData == nil {
 		user, err := service.repo.GetUsers(ID)
 		if err != nil {

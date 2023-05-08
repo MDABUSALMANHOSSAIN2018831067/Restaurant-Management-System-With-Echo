@@ -14,15 +14,20 @@ var db *gorm.DB
 
 func Connect() {
 	dbConfig := config.LocalConfig
-	//d, err := gorm.Open("mysql", "root:Salman12#@/restaurantmanagemensystem?charset=utf8&parseTime=True&loc=Local")
-	dsn := fmt.
-		Sprintf("%s:%s@/%s?charset=utf8mb4&parseTime=True&loc=Local",
-			dbConfig.DBUser, dbConfig.DBPass, dbConfig.DbName)
+	//d, err := gorm.Open("mysql", "root:Salman12@/restaurantmanagemensystem?charset=utf8&parseTime=True&loc=Local")
+	// dsn := fmt.
+	// 	Sprintf("%s:%s@/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	// 		dbConfig.DBUser, dbConfig.DBPass, dbConfig.DBName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		dbConfig.DBUser, dbConfig.DBPass, dbConfig.DBHOST, dbConfig.DBPort, dbConfig.DBName)
+	fmt.Println(dsn)
+	fmt.Println(dbConfig.DBUser, dbConfig.DBPass, dbConfig.DBHOST, dbConfig.DBPort, dbConfig.DBName)
 	d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
+	fmt.Println(d)
 	if err != nil {
-		fmt.Println("error connecting to DB")
+		fmt.Println("error connecting to DB", err)
 		panic(err)
 	}
 

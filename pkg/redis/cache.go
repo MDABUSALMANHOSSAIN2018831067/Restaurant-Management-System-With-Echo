@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"encoding/json"
+	"restaurant-management/pkg/connection"
 	"restaurant-management/pkg/models"
 
 	"github.com/go-redis/redis/v8"
@@ -14,12 +15,12 @@ type RedisStore struct {
 }
 
 func NewRedisStore() *RedisStore {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-
+	// rdb := redis.NewClient(&redis.Options{
+	// 	Addr:     "localhost:6379",
+	// 	Password: "", // no password set
+	// 	DB:       0,  // use default DB
+	// })
+	rdb := connection.Redis()
 	return &RedisStore{
 		client: rdb,
 		ctx:    context.Background(),

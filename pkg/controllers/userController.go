@@ -56,14 +56,12 @@ func (userController *UserController) Login(c echo.Context) error {
 	if err := user.Validate(); err != nil {
 		return c.JSON(http.StatusInternalServerError, &types.CustomError{
 			Message: err.Error(),
-			Err:     err,
 		})
 	}
 	model_user, err := userController.userService.LoginService(user.Email)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, &types.CustomError{
 			Message: err.Error(),
-			Err:     err,
 		})
 	}
 	passwordIsValid, msg := VerifyPassword(user.Password, model_user.Password)
@@ -76,7 +74,6 @@ func (userController *UserController) Login(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, &types.CustomError{
 			Message: err.Error(),
-			Err:     err,
 		})
 	}
 	return c.JSON(http.StatusOK, tokens)
@@ -93,28 +90,9 @@ func (userController *UserController) GetUsers(e echo.Context) error {
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, &types.CustomError{
 			Message: err.Error(),
-			Err:     err,
 		})
 	}
 	return e.JSON(http.StatusOK, user)
-	// store := redis.NewRedisStore()
-	// getData, _ := store.Get(tempID)
-	// if getData == nil {
-	// 	user, err := userController.userService.GetUserService(uint(ID))
-	// 	if err != nil {
-	// 		return e.JSON(http.StatusBadRequest, &types.CustomError{
-	// 			Message: err.Error(),
-	// 			Err:     err,
-	// 		})
-	// 	}
-	// 	err = store.Set(tempID, user)
-	// 	if err != nil {
-	// 		return e.JSON(http.StatusInternalServerError, err.Error())
-	// 	}
-	// 	return e.JSON(http.StatusOK, user)
-	// } else {
-	// 	return e.JSON(http.StatusOK, getData)
-	// }
 }
 
 // Delete user
@@ -129,14 +107,12 @@ func (userController *UserController) DeleteUser(e echo.Context) error {
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, &types.CustomError{
 			Message: err.Error(),
-			Err:     err,
 		})
 	}
 
 	if err := userController.userService.DeleteUserService(uint(ID)); err != nil {
 		return e.JSON(http.StatusInternalServerError, &types.CustomError{
 			Message: err.Error(),
-			Err:     err,
 		})
 	}
 
@@ -159,7 +135,6 @@ func (userController *UserController) UpdateUser(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, &types.CustomError{
 			Message: err.Error(),
-			Err:     err,
 		})
 	}
 	user.ID = uint(userID)
@@ -170,7 +145,6 @@ func (userController *UserController) UpdateUser(c echo.Context) error {
 	if err != nil || res == nil {
 		return c.JSON(http.StatusInternalServerError, &types.CustomError{
 			Message: err.Error(),
-			Err:     err,
 		})
 	}
 	return c.JSON(http.StatusOK, "update was success")

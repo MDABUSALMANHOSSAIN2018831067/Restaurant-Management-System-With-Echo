@@ -64,3 +64,15 @@ func (user Registration) Validate() error {
 		validation.Field(&user.UserType),
 	)
 }
+
+type LoginResponse struct {
+	Password string `json:"password"`
+	Email    string `json:"email"`
+}
+
+func (user LoginResponse) Validate() error {
+	return validation.ValidateStruct(&user,
+		validation.Field(&user.Password, validation.Required, validation.Length(4, 20)),
+		validation.Field(&user.Email, validation.Required, is.Email),
+	)
+}
